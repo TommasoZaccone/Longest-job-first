@@ -1,0 +1,7 @@
+.DEFAULT_GOAL=all
+
+run: all
+	cd sim; ../$(TARGET) -n .:../src $*
+
+
+
