@@ -1,0 +1,32 @@
+
+#include "stats.h"
+#include "job_m.h"
+
+Define_Module(Stats);
+
+void Stats::initialize()
+{
+s_serviceT= registerSignal("serviceT");
+s_queueT=registerSignal("queueT");
+s_responseT=registerSignal("responseT");
+
+}
+
+void Stats::handleMessage(cMessage *msg)
+{
+    Job *mex = check_and_cast<Job*>(msg);
+    simtime_t serviceT= mex->getServiceT();
+    simtime_t responseT=mex->getExitSystemT()-mex->getEnterSystemT();
+    simtime_t queueT=responseT-serviceT;
+    emit(s_serviceT,serviceT);
+    emit(s_queueT,queueT);
+    emit(s_responseT,responseT);
+
+    /*
+    EV<<"JOB ID = "<<id<<endl;
+    EV<<"SERVICE TIME = "<<serviceT<<endl;
+    EV<<"QUEUE TIME = "<<queueT<<endl;
+    EV<<"RESPONSE TIME  = "<<responseT<<endl;
+    */
+    delete mex;
+}

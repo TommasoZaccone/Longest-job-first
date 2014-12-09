@@ -1,7 +1,7 @@
 .DEFAULT_GOAL=all
 
 run: all
-	cd sim; ../$(TARGET) -n .:../src $*
+	cd sim; ../$(TARGET) -n ../src -u Cmdenv
 
 
 

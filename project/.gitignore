@@ -1,4 +1,6 @@
 project
 out
+sim/results
+*_m.*
 Makefile
 .*
