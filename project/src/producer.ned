@@ -6,12 +6,11 @@ package progetto;
 simple Producer
 {
 	parameters:
-	     @statistic[interArrival](source="interArrival"; record=vector);
+	     @statistic[interArrivalT](source="interArrivalT"; record=vector);
 	     @statistic[serviceT](source="serviceT"; record=vector);
-	     double iaMean @unit(s);
-	     double stMean @unit(s);
-	     string iaDist=default("exp");
-	     string stDist=default("exp");
-        gates:
+
+	     volatile double interArrivalDist=default(exponential(2));
+	     volatile double serviceDist=default(exponential(1));
+    gates:
         output out;
 }

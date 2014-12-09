@@ -22,25 +22,29 @@ Define_Module(Producer);
 void Producer::initialize()
 {
     id=0;
-    iaMean=par("iaMean");
-    stMean=par("stMean");
-    s_interArrival = registerSignal("interArrival");
+
+	s_interArrivalT = registerSignal("interArrivalT");
     s_serviceT = registerSignal("serviceT");
+
     scheduleAt(simTime(),new cMessage);
 }
 
 void Producer::handleMessage(cMessage *msg)
 {
     Job *mex = new Job;
-    simtime_t interArrival = exponential(iaMean,0);
-    emit(s_interArrival,interArrival);
-    simtime_t serviceT = exponential(stMean,1);
+
+    simtime_t interArrivalT = par("interArrivalDist");
+    emit(s_interArrivalT,interArrivalT);
+    
+	simtime_t serviceT = par("serviceDist");
     emit(s_serviceT,serviceT);
-    mex->setServiceT(serviceT);
+    
+	mex->setServiceT(serviceT);
     mex->setId(id++);
     mex->setKind(JOB);
     send(mex,"out");
-    scheduleAt(simTime()+interArrival,msg);
+    
+	scheduleAt(simTime()+interArrivalT,msg);
 
 
 }

@@ -22,10 +22,8 @@ class Producer : public cSimpleModule
 {
 private:
     int id;
-    simsignal_t s_interArrival;
+    simsignal_t s_interArrivalT;
     simsignal_t s_serviceT;
-    simtime_t iaMean;
-    simtime_t stMean;
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
