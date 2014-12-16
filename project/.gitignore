@@ -1,6 +1,8 @@
 project
 out
 sim/results
+sim/__pycache__
 *_m.*
 Makefile
 .*
+
