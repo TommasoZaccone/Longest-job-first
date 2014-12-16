@@ -17,19 +17,8 @@
 #define __PROGETTO_QUEUE_H_
 
 #include <omnetpp.h>
-#include <queue>
+#include "queue.h"
 #include "job_m.h"
-
-//compare functor class for stl comparison
-//la compare di libreria vuole una funz x decidere il minoreinternamente alla struttura
-class jobLessThen {
-public:
-   bool operator () (Job *a, Job* b) {
-
-      return a->getServiceT() < b->getServiceT() ;
-      }
-
-    } ;
 
 class Server : public cSimpleModule
 {
@@ -38,9 +27,7 @@ private:
     cMessage* timer;
     cMessage* stats_timer;
     simsignal_t s_numJobs;
-
-    std::priority_queue <Job* , std::vector<Job*>, jobLessThen> q ;
-
+    Queue* q;
     void handleTimer(cMessage* msg);
     void handleJob(cMessage*msg);
   protected:

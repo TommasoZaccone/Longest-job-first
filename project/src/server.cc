@@ -15,11 +15,18 @@
 
 #include "server.h"
 #include "define.h"
+#include <string>
 
 Define_Module(Server);
 
 void Server::initialize()
 {
+    std::string qPolicy = par("queuePolicy");
+    if(qPolicy=="LJF"){
+        q= new PriorityQueue;
+    }
+    else
+        q=new FifoQueue;
     currentJob=0;
     timer=new cMessage; //in caso da deallocare con la finish()
     stats_timer= new cMessage;
@@ -45,7 +52,7 @@ void Server::handleMessage(cMessage *msg)
                         break;
             case STATS_TIMER :
                 //conto i pacchetti in coda
-                int numJobs = q.size();
+                int numJobs = q->size();
                 emit(s_numJobs,numJobs);
                 scheduleAt(simTime()+0.1,stats_timer);
                 break;
@@ -53,15 +60,14 @@ void Server::handleMessage(cMessage *msg)
 }
 
 void Server::handleTimer(cMessage* msg){
-    Job *mex = check_and_cast<Job*>(currentJob);
-    mex->setExitSystemT(simTime());
+    currentJob->setExitSystemT(simTime());
     send(currentJob,"out");
-    if(q.empty()) {
+    if(q->empty()) {
         currentJob=0;
     }
     else {
-        currentJob=q.top();
-        q.pop();
+        currentJob=q->top();
+        q->pop();
         scheduleAt(currentJob->getServiceT() + simTime(),timer);
     }
 }
@@ -74,5 +80,5 @@ void Server::handleJob(cMessage* msg){
         scheduleAt(currentJob->getServiceT() + simTime(),timer);
     }
     else
-        q.push(mex);
+        q->push(mex);
 }
