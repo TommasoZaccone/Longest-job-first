@@ -1,7 +1,11 @@
 .DEFAULT_GOAL=all
 
-run: all
-	cd sim; ../$(TARGET) -n ../src -u Cmdenv
+all: runfile
 
+runfile: sim/run.sh
+	@echo '#!/bin/sh' > $<
+	@echo 'cd $$(dirname $$0)' >> $<
+	@echo '../$(TARGET) -n ../src -u Cmdenv $$*' >> $<
+	@chmod a+x $<
 
 
