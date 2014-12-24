@@ -22,11 +22,10 @@ Define_Module(Producer);
 void Producer::initialize()
 {
     id=0;
-
+    timer = new cMessage;
 	s_interArrivalT = registerSignal("interArrivalT");
     s_serviceT = registerSignal("serviceT");
-
-    scheduleAt(simTime(),new cMessage);
+    scheduleAt(simTime(),timer);
 }
 
 void Producer::handleMessage(cMessage *msg)
@@ -48,3 +47,9 @@ void Producer::handleMessage(cMessage *msg)
 
 
 }
+
+void Producer::finish(){
+    cancelEvent(timer);
+    delete timer;
+}
+

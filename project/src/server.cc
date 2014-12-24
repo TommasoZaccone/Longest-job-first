@@ -29,11 +29,7 @@ void Server::initialize()
         q=new FifoQueue;
     currentJob=0;
     timer=new cMessage; //in caso da deallocare con la finish()
-    stats_timer= new cMessage;
-    stats_timer->setKind(STATS_TIMER);
     s_numJobs = registerSignal("numJobs");
-    //schedulo il timer per le statistiche
-    scheduleAt(simTime()+0.1,stats_timer);
 }
 
 void Server::handleMessage(cMessage *msg)
@@ -50,13 +46,10 @@ void Server::handleMessage(cMessage *msg)
                 //mi arriva un job nuovo
                 handleJob(msg);
                         break;
-            case STATS_TIMER :
-                //conto i pacchetti in coda
-                int numJobs = q->size();
-                emit(s_numJobs,numJobs);
-                scheduleAt(simTime()+0.1,stats_timer);
-                break;
+            //#pacchetti totali nel sistema (quelli in coda + quello attivo)
     }
+        int numJobs= q->size()+(currentJob!=0);
+        emit(s_numJobs,numJobs);
 }
 
 void Server::handleTimer(cMessage* msg){
@@ -82,3 +75,16 @@ void Server::handleJob(cMessage* msg){
     else
         q->push(mex);
 }
+
+void Server::finish() {
+    cancelEvent(timer);
+    delete timer;
+    if(currentJob!=0)
+        delete currentJob;
+    EV<<"ELEMENTI IN CODA "<<q->size()<<endl;
+    while(!q->empty()){
+        delete q->top();
+        q->pop();
+        }
+}
+

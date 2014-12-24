@@ -24,9 +24,11 @@ private:
     int id;
     simsignal_t s_interArrivalT;
     simsignal_t s_serviceT;
+    cMessage* timer;
 protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    virtual void finish();
 };
 
 #endif

@@ -21,12 +21,5 @@ void Stats::handleMessage(cMessage *msg)
     emit(s_serviceT,serviceT);
     emit(s_queueT,queueT);
     emit(s_responseT,responseT);
-
-    /*
-    EV<<"JOB ID = "<<id<<endl;
-    EV<<"SERVICE TIME = "<<serviceT<<endl;
-    EV<<"QUEUE TIME = "<<queueT<<endl;
-    EV<<"RESPONSE TIME  = "<<responseT<<endl;
-    */
     delete mex;
 }

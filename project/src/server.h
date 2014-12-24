@@ -25,14 +25,14 @@ class Server : public cSimpleModule
 private:
     Job* currentJob;
     cMessage* timer;
-    cMessage* stats_timer;
     simsignal_t s_numJobs;
     Queue* q;
     void handleTimer(cMessage* msg);
     void handleJob(cMessage*msg);
-  protected:
+protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    virtual void finish();
 };
 
 #endif
