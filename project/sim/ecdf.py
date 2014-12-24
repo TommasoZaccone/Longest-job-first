@@ -6,8 +6,8 @@ import numpy
 
 import data_utils
 
-if len(sys.argv)<3:
-    print("arguments:[bins] [files]")
+if len(sys.argv)<2:
+    print("arguments:[files]")
     exit(1)
 
 files = sys.argv[1:]
