@@ -8,7 +8,6 @@
 class Stats : public cSimpleModule
 {
     private:
-    simsignal_t s_serviceT;
     simsignal_t s_queueT;
     simsignal_t s_responseT;
 
