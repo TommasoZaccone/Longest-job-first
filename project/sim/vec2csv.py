@@ -6,11 +6,18 @@ import sh
 import re
 import glob
 
+
+if len(sys.argv)<2:
+    print("arguments: [variable]")
+    exit(1)
+
+variable = sys.argv[1]
+
 os.chdir(os.path.dirname(sys.argv[0]))
 
 vecs = [v for v in os.listdir("results") if re.match(".*\-0.vec$",v)]
 
-r = re.compile('^(General-"(.*)"-([0-9]+(?:\.[0-9]+)*)-([0-9]+(?:\.[0-9]+)*))-0.vec$')
+r = re.compile('^(General-"(.*)"-([0-9]+(?:\.[0-9]+)*))-0.vec$')
     
 os.chdir("results")
 for v in vecs:
@@ -20,13 +27,12 @@ for v in vecs:
     sources = glob.glob(sourceglob)
     
     policy = params.group(2)
-    iaMean = params.group(3)
-    sMean = params.group(4)
+    utilization = params.group(3)
     
 
-    name = policy+'-'+iaMean+'-'+sMean+'.csv'
+    name = variable+'-'+policy+'-'+utilization+'.csv'
 
-    sh.scavetool("v","-p","name(responseT:vector)","-O",name,"-F","csv",sources)
+    sh.scavetool("v","-p",variable+":vector","-O",name,"-F","csv",sources)
     print(name)
 
 
