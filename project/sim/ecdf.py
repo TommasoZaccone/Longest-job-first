@@ -19,6 +19,7 @@ for l,x in zip(labels,vecs):
     print("sample size: "+str(len(x)))
     print("sample mean: "+str(numpy.mean(x)))
 
+    x.sort()
     y = []
     n = len(x)
     k = 0

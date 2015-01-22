@@ -19,8 +19,10 @@ for l,x in zip(labels,vecs):
     print("label: "+l)
     print("sample size: "+str(len(x)))
     print("sample mean: "+str(numpy.mean(x)))
+    x.sort()
 
-    plt.hist(x,bins=bins,normed=True,histtype='step',label=l)
+    b = int(numpy.max(x)*10/bins)
+    plt.hist(x,bins=b,normed=True,histtype='step',label=l)
 
 plt.legend()
 plt.show()

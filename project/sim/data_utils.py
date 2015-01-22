@@ -25,7 +25,6 @@ def load_csv(files):
                         x.append(float(e))
                     except:
                         pass
-        x.sort()
         vecs.append(x)
 
     return (labels,vecs)
