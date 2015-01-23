@@ -8,31 +8,34 @@ import glob
 
 
 if len(sys.argv)<2:
-    print("arguments: [variable]")
+    print("arguments: [variabls]")
     exit(1)
 
-variable = sys.argv[1]
+variables = sys.argv[1:]
 
 os.chdir(os.path.dirname(sys.argv[0]))
 
 vecs = [v for v in os.listdir("results") if re.match(".*\-0.vec$",v)]
 
-r = re.compile('^(General-"(.*)"-([0-9]+(?:\.[0-9]+)*))-0.vec$')
+#capture float: ([0-9]+(?:\.[0-9]+)*)
+r = re.compile('^((.*)-"(.*)"-(.*))-0.vec$')
     
 os.chdir("results")
 for v in vecs:
-    params = r.match(v)
+    captures = r.match(v)
 
-    sourceglob = params.group(1)+"-*.vec"
+    sourceglob = captures.group(1)+"-*.vec"
     sources = glob.glob(sourceglob)
     
-    policy = params.group(2)
-    utilization = params.group(3)
+    dist = captures.group(2)
+    policy = captures.group(3)
+    params = captures.group(4)
     
 
-    name = variable+'-'+policy+'-'+utilization+'.csv'
+    for v in variables:
+        name = v+'-'+dist+'-'+policy+'-'+params+'.csv'
 
-    sh.scavetool("v","-p",variable+":vector","-O",name,"-F","csv",sources)
-    print(name)
+        sh.scavetool("v","-p",v+":vector","-O",name,"-F","csv",sources)
+        print(name)
 
 
