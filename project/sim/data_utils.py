@@ -4,6 +4,7 @@ import csv
 import sys
 import math
 import re
+import numpy
 
 
 def load_csv(files):
@@ -25,7 +26,7 @@ def load_csv(files):
                         x.append(float(e))
                     except:
                         pass
-        vecs.append(x)
+        vecs.append(numpy.asarray(x))
 
     return (labels,vecs)
 
