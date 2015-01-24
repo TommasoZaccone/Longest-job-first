@@ -27,6 +27,8 @@ private:
     cMessage* timer;
     simsignal_t s_numJobs;
     Queue* q;
+	int totJobs;
+	int maxJobs;
     void handleTimer(cMessage* msg);
     void handleJob(cMessage*msg);
 protected:
