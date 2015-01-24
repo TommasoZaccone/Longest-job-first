@@ -5,7 +5,8 @@ simple Server
 {
     parameters:
         string queuePolicy=default("FIFO");
-        @statistic[numJobs](source="numJobs"; record=vector);
+		int maxJobs;
+        @statistic[numJobs](source="numJobs"; record=timeavg);
     gates:
         input in;
         output out;
