@@ -43,7 +43,6 @@ parser.add_option("-c", "--confidence-intervall", type="float", default=0, dest=
 parser.add_option("-l", "--legend-position", type="int", default=0, dest="lpos", help="Position of the legend (default:auto)")
 parser.add_option("-s", "--scale", type="float", default=1, help="Scale y values by a factor of SCALE")
 parser.add_option("-S", "--offset", type="float", default=0, help="Add OFFSET to y values")
-parser.add_option("-o", "--outfile", help="Instead of displaying the plot, write a gnuplot-readable file to OUTFILE.dat and a gnuplot script to OUTFILE.plot.")
 parser.add_option("-x", "--xlabel", type="string", dest="xlabel", help="Label for the x-axis")
 parser.add_option("-y", "--ylabel", type="string", dest="ylabel", help="Label for the x-axis")
 (options, args) = parser.parse_args()
@@ -167,21 +166,12 @@ else:
     ax.set_ylabel(args[1])    
 ax.grid(True)
 
-if options.outfile:
-    bucketlist.sort()
-    outarray = np.array(bucketlist)
 
 # Go through all runs
 for run in sorted(valuemap.keys()):
     rundata = valuemap[run]
     row={}
     ci={}
-
-    if options.outfile:
-        if options.ci > 0:
-            outcol = np.zeros((3, len(bucketlist)))
-        else:
-            outcol = np.zeros((1, len(bucketlist)))
 
     # Compute mean of all runs in all buckets
     for bucket, bucketdata in rundata.items():
@@ -194,76 +184,14 @@ for run in sorted(valuemap.keys()):
         bucketmean = bucketmean*options.scale + options.offset
         row[bucket] = bucketmean
 
-        if options.outfile:
-            outcol[0, bucketlist.index(bucket)] = bucketmean
-            if options.ci > 0:
-                outcol[1, bucketlist.index(bucket)] = bucketmean - bucketci
-                outcol[2, bucketlist.index(bucket)] = bucketmean + bucketci
-        
-    if options.outfile:
-        outarray = np.vstack((outarray, outcol))
+    # Plot row
+    if options.ci == 0:
+        ax.plot(sorted(row.keys()), sortedDictValues(row), label=run, marker='+')
     else:
-        # Plot row
-        if options.ci == 0:
-            ax.plot(sorted(row.keys()), sortedDictValues(row), label=run, marker='+')
-        else:
-            ax.errorbar(sorted(row.keys()), sortedDictValues(row),  sortedDictValues(ci), label=run, ecolor='k', marker='o', barsabove=True)
+        ax.errorbar(sorted(row.keys()), sortedDictValues(row),  sortedDictValues(ci), label=run, ecolor='k', marker='o', barsabove=True)
 
-if options.outfile:
-    # Write data to gnuplot readable file
-    outfile = open(options.outfile+".dat", "w")
-    outfile.write("#"+args[0])
-    for run in sorted(valuemap.keys()):
-        outfile.write("," + run)
-    outfile.write("\n")
-    np.savetxt(outfile, outarray.T, delimiter=',')
-    outfile.close()
-    # Write gnuplot script
-    outfile = open(options.outfile+".plot", "w")
-    outfile.write("set terminal postscript enhanced color eps lw 5 \"Helvetica-Bold\" 20 solid\n")
-    outfile.write("set encoding iso_8859_1\n")    
-    outfile.write("set border 31 linewidth 0.3\n")
-    outfile.write("set pointsize 2.5\n")
-    outfile.write("set style line 1 pt 7\n")
-    outfile.write("set style line 2 pt 5\n")
-    outfile.write("set style line 3 pt 6\n")
-    outfile.write("set style line 4 pt 11\n")
-    outfile.write("set style line 5 pt 4 lc 9\n")
-    outfile.write("set style line 6 pt 2 lc 8\n")
-    outfile.write("set style line 7 pt 8 lc 5\n")
-    outfile.write("set style increment user\n")
-    outfile.write("set datafile separator \",\"\n")
-    outfile.write("set terminal postscript eps\n")
-    if options.ci > 0:
-        outfile.write("set style data errorlines\n")
-    else:
-        outfile.write("set style data linespoints\n")
-    if options.xlabel:
-        outfile.write("set xlabel \""+options.xlabel+"\" font \"Helvetica-Bold,24\"\n")
-    else:
-        outfile.write("set xlabel \""+args[0]+"\"\n")            
-    if options.ylabel:
-        outfile.write("set ylabel \""+options.ylabel+"\" font \"Helvetica-Bold,24\"\n")
-    else:
-        outfile.write("set ylabel \""+args[1]+"\"\n")                
-    outfile.write("set output \"" + options.outfile + ".eps\"\n")
-    outfile.write("plot ")
-    i=2
-    for run in sorted(valuemap.keys()):
-        if options.ci > 0:
-            outfile.write("\"" + options.outfile+".dat\" using 1:"+str(i)+":"+str(i+1)+":"+str(i+2)+" title \""+run+"\",")
-            i += 3
-        else:
-            outfile.write("\"" + options.outfile+".dat\" using 1:"+str(i)+" title \""+run+"\",")
-            i+=1
-    # remove trailing ","
-    outfile.seek(-1,1)
-    outfile.truncate()
-    outfile.write("\n")
-
-else:
-    # Display plot
-    font=FontProperties(size='small')
-    leg=ax.legend(loc=options.lpos, shadow=True, prop=font)
-    plt.show()
+# Display plot
+font=FontProperties(size='small')
+leg=ax.legend(loc=options.lpos, shadow=True, prop=font)
+plt.show()
 

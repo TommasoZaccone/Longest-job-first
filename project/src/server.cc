@@ -30,8 +30,7 @@ void Server::initialize()
     currentJob=0;
     timer=new cMessage; //in caso da deallocare con la finish()
     s_numJobs = registerSignal("numJobs");
-	maxJobs = par("maxJobs");
-	totJobs = 0;
+	minTime = par("minTime");
 }
 
 void Server::handleMessage(cMessage *msg)
@@ -57,10 +56,9 @@ void Server::handleMessage(cMessage *msg)
 void Server::handleTimer(cMessage* msg){
     currentJob->setExitSystemT(simTime());
     send(currentJob,"out");
-	totJobs++;
     if(q->empty()) {
         currentJob=0;
-		if(totJobs>maxJobs){
+		if(simTime()>minTime){
 			endSimulation();
 		}
     }

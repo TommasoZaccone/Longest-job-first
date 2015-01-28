@@ -5,7 +5,7 @@ simple Server
 {
     parameters:
         string queuePolicy=default("FIFO");
-		int maxJobs;
+		double minTime;
         @statistic[numJobs](source="numJobs"; record=timeavg);
     gates:
         input in;

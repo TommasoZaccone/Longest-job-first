@@ -41,7 +41,7 @@ parser.add_option("-e", "--exclude", type="string", action="append", help="Exclu
 parser.add_option("-b", "--bucketsize", type="float", default=1.0, dest="bucketsize", help="Size of the buckets for pdf to BUCKETSIZE (default=1.0)")
 parser.add_option("-c", "--confidence-intervall", type="float", default=0, dest="ci", help="Plots the confidence intervals with confidence level LEVEL", metavar="LEVEL")
 parser.add_option("-l", "--legend-position", type="int", default=0, dest="lpos", help="Position of the legend (default:auto)")
-parser.add_option("-t", "--plot-type", type="string", default="pdf", dest="ptype", help="Plot type (pdf,cdf,cdf_inters)")
+parser.add_option("-t", "--plot-type", type="string", default="pdf", dest="ptype", help="Plot type (pdf,cdf,cdf_inters,lorenz)")
 parser.add_option("-I", "--intersection", type="float", default=1.0, dest="ihint", help="Hint for finding intersection point (only with -t cdf_inters)")
 (options, args) = parser.parse_args()
 
@@ -132,6 +132,13 @@ def cdf(rundata):
     y = np.arange(len(x))/float(len(x))
     return x,y
 
+def lorenz(rundata):
+    d = np.sort(rundata)
+    x = np.arange(len(d))/float(len(d))
+    y = np.cumsum(d)/np.sum(d)
+    ax.plot([0,1],[0,1])
+    return x,y
+
 
 colors = ['r','g','b','y','c']
 c = 0
@@ -149,18 +156,27 @@ elif options.ptype == "cdf_inters":
         inters_hint = options.ihint
     else:
         print("Too many runs for cdf_inters")
+        exit(1)
+elif options.ptype == "lorenz":
+    f = lorenz
 else:
     print("Plot not supported: "+options.ptype)
     exit(1)
 
 # Go through all runs
 for run in sorted(valuemap.keys()):
-    rundata = valuemap[run]
+    rundata = np.array(valuemap[run])
     x,y = f(rundata)
     ax.plot(x,y,label=run,color=colors[c])
 
-    ax.axvline(x=np.median(x),ymax = 0.5,color=colors[c],linewidth=1)
-    ax.axvline(x=np.percentile(x,95),ymax = 0.95,color=colors[c],linewidth=1)
+    #ax.axvline(x=np.percentile(rundata,0.5),ymax = 0.5,color=colors[c],linewidth=1)
+    #ax.axvline(x=np.percentile(rundata,95),ymax = 0.95,color=colors[c],linewidth=1)
+    #ax.axvline(x=np.mean(rundata),ymax = 1,color=colors[c],linewidth=1,linestyle="--")
+
+    print(run)
+    print("mean value: " + str(np.mean(rundata)))
+    print("median value: " + str(np.median(rundata)))
+    print("95% percentile: " + str(np.percentile(rundata,95)))
     
     c = (c+1)%len(colors)
 
