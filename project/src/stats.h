@@ -7,14 +7,14 @@
 
 class Stats : public cSimpleModule
 {
-    private:
-    simsignal_t s_queueT;
-    simsignal_t s_responseT;
+	private:
+    	simsignal_t s_queueT;
+    	simsignal_t s_responseT;
 
 
-  protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
+	protected:
+    	virtual void initialize();
+    	virtual void handleMessage(cMessage *msg);
 };
 
 #endif

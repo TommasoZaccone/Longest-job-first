@@ -39,12 +39,11 @@ class PriorityQueue: public Queue
         //compare functor class for stl comparison
         //la compare di libreria vuole una funz x decidere il minoreinternamente alla struttura
         class jobLessThen {
-        public:
-           bool operator () (Job *a, Job* b) {
-
-              return a->getServiceT() < b->getServiceT() ;
-              }
-            } ;
+        	public:
+				bool operator () (Job *a, Job* b) {
+					return a->getServiceT() < b->getServiceT() ;
+				}
+		} ;
         std::priority_queue <Job* , std::vector<Job*>, jobLessThen> q ;
 };
 

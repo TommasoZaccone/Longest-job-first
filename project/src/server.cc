@@ -25,8 +25,9 @@ void Server::initialize()
     if(qPolicy=="LJF"){
         q= new PriorityQueue;
     }
-    else
+    else{
         q=new FifoQueue;
+	}
     currentJob=0;
     timer=new cMessage; //in caso da deallocare con la finish()
     s_numJobs = registerSignal("numJobs");
@@ -36,21 +37,19 @@ void Server::initialize()
 void Server::handleMessage(cMessage *msg)
 {
 
-    switch(msg->getKind()) {
+	switch(msg->getKind()) {
 
-            case TIMER :
-                //ho gia aspettato lenght del precedente top cio� currentJob
-                handleTimer(msg);
-                        break;
-
-            case JOB :
-                //mi arriva un job nuovo
-                handleJob(msg);
-                        break;
-            //#pacchetti totali nel sistema (quelli in coda + quello attivo)
-    }
-        int numJobs= q->size()+(currentJob!=0);
-        emit(s_numJobs,numJobs);
+		case TIMER :
+			//service time ended
+			handleTimer(msg);
+			break;
+		case JOB :
+			//new job
+			handleJob(msg);
+			break;
+	}
+	int numJobs= q->size()+(currentJob!=0);
+	emit(s_numJobs,numJobs);
 }
 
 void Server::handleTimer(cMessage* msg){
@@ -76,19 +75,21 @@ void Server::handleJob(cMessage* msg){
         currentJob=mex;
         scheduleAt(currentJob->getServiceT() + simTime(),timer);
     }
-    else
+    else{
         q->push(mex);
+	}
 }
 
 void Server::finish() {
     cancelEvent(timer);
     delete timer;
-    if(currentJob!=0)
+    if(currentJob!=0){
         delete currentJob;
-    EV<<"ELEMENTI IN CODA "<<q->size()<<endl;
+	}
+    EV<<"ELEMENTS IN QUEUE "<<q->size()<<endl;
     while(!q->empty()){
         delete q->top();
         q->pop();
-        }
+	}
 }
 

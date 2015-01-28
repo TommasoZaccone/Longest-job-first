@@ -6,8 +6,8 @@ Define_Module(Stats);
 
 void Stats::initialize()
 {
-s_queueT=registerSignal("queueT");
-s_responseT=registerSignal("responseT");
+	s_queueT=registerSignal("queueT");
+	s_responseT=registerSignal("responseT");
 
 }
 
